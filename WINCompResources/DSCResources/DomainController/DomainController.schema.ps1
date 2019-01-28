@@ -5,6 +5,28 @@ Configuration DomainController
 {
     Param
     (
-        
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]
+        $DomainName,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $DomainAdminCred,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $SafeModeAdminCred
     )
+    Import-DscResource -ModuleName xActiveDirectory -ModuleVersion 2.23.0.0
+
+    xADDomain PrimaryDC
+    {
+        DomainName                      = $DomainName
+        DomainAdministratorCredential   = $DomainAdminCred
+        SafemodeAdministratorPassword   = $SafeModeAdminCred 
+    }
+
 }
