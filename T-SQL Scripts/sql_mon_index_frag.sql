@@ -1,5 +1,5 @@
 --This script list all index fragmentations as found in Redgate SQL Monitor Database
-
+USE [Redgatemonitor-New] --change db name to match sqlmon db_name 
 SELECT 
     A._Fragmentation AS [Fragmentation],
     B._Name AS [Index Name],
