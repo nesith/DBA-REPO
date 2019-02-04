@@ -13,7 +13,7 @@ DECLARE @enabled            AS INT
 DECLARE @category_id        AS INT
 DECLARE @freq_interval	    AS INT
 DECLARE @freq_recur_factor  AS INT
-DECLARE @owner		        AS sysname
+DECLARE @owner		    AS sysname
 DECLARE @description	    AS VARCHAR(MAX)
 
 --Command and Subsytem need to chnage based on SQL server version
@@ -114,7 +114,7 @@ EXECUTE msdb.dbo.sp_add_jobstep
 EXECUTE msdb.dbo.sp_add_schedule
         @schedule_name = @schedule_name,
         @freq_type = @freq_type,
-		@freq_interval = @freq_interval,
+	@freq_interval = @freq_interval,
         @active_start_time = @active_start_time
 
 EXECUTE msdb.dbo.sp_attach_schedule
