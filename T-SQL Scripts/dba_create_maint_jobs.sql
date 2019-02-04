@@ -8,17 +8,17 @@ DECLARE @command_index      AS varchar(MAX)
 DECLARE @schedule_name      AS varchar(MAX)
 DECLARE @freq_type          AS INT
 DECLARE @active_start_time  AS INT
-DECLARE @version            AS SQL_VARIANT
+DECLARE @version            AS NUMERIC(18,10)
 DECLARE @enabled            AS INT
 DECLARE @category_id        AS INT
 DECLARE @freq_interval	    AS INT
 DECLARE @freq_recur_factor  AS INT
-DECLARE @owner		    AS sysname
+DECLARE @owner		        AS sysname
 DECLARE @description	    AS VARCHAR(MAX)
 
 --Command and Subsytem need to chnage based on SQL server version
 
-SELECT @version = SERVERPROPERTY('ProductMajorVersion')
+SET @version = CAST(LEFT(CAST(SERVERPROPERTY('ProductVersion') AS nvarchar(max)),CHARINDEX('.',CAST(SERVERPROPERTY('ProductVersion') AS nvarchar(max))) - 1) + '.' + REPLACE(RIGHT(CAST(SERVERPROPERTY('ProductVersion') AS nvarchar(max)), LEN(CAST(SERVERPROPERTY('ProductVersion') AS nvarchar(max))) - CHARINDEX('.',CAST(SERVERPROPERTY('ProductVersion') AS nvarchar(max)))),'.','') AS numeric(18,10))
 
 IF @version < 10
 	BEGIN
@@ -26,7 +26,9 @@ IF @version < 10
         SET @command_index      = 'SQLCMD -E -d master -Q "EXECUTE dbo.IndexOptimize @Databases = ''USER_DATABASES'',@FragmentationLow = NULL,@FragmentationMedium = ''INDEX_REORGANIZE,INDEX_REBUILD_ONLINE,INDEX_REBUILD_OFFLINE'',@FragmentationHigh = ''INDEX_REBUILD_ONLINE,INDEX_REBUILD_OFFLINE'',@FragmentationLevel1 = 5,@FragmentationLevel2 = 30,@UpdateStatistics = ''ALL'',@SortInTempdb = ''Y''" -b'      
         SET @sub_system         = 'CMDEXEC'
 	END
-ELSE
+
+IF @version >=11
+	BEGIN
         SET @command_dbcc       = 'EXECUTE dbo.DatabaseIntegrityCheck @Databases = ''ALL_DATABASES'',@CheckCommands = ''CHECKDB'''
         SET @command_index      = 'EXECUTE dbo.IndexOptimize
                                             @Databases = ''ALL_DATABASES'',
@@ -38,7 +40,7 @@ ELSE
                                             @UpdateStatistics = ''ALL'',
                                             @SortInTempdb = ''Y'''
         SET @sub_system         = 'TSQL'
-
+	END
 --setup DBCC Check DB job
 SET @job_name           = 'DBA - Database Integrity Check - All Databases'
 SET @step_name          = 'Run OLA''s DBCC Command'
