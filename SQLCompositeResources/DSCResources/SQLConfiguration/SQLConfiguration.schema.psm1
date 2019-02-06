@@ -66,7 +66,10 @@ Param(  [Parameter(Mandatory = $true)]
         )
 
     Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.2.0.0
-    Import-DscResource -ModuleName ComputerManagementDsc -ModuleVersion 6.1.0.0  
+    Import-DscResource -ModuleName ComputerManagementDsc -ModuleVersion 6.1.0.0 
+    Import-DscResource -ModuleName StorageDsc -ModuleVersion 4.4.0.0
+    Import-DscResource -ModuleName NetworkingDsc -ModuleVersion 6.3.0.0
+    Import-DscResource -ModuleName SecurityPolicyDsc -ModuleVersion 2.7.0.0
     
     PowerPlan SetPlanHighPerformance
     {
@@ -74,25 +77,28 @@ Param(  [Parameter(Mandatory = $true)]
         Name             = "High Performance"
     }
 
-    VirtualMemory SetVirtualMem
+    <#VirtualMemory SetVirtualMem
     {
          Drive          = $VirtualMemoryDrive
          Type           = 'CustomSize'
          InitialSize    = $VirtualMemoryInitialSize
          MaximumSize    = $VirtualMemoryMaximumSize
-    }
+    }#>
     SQLServerMemory 'SetSQLMemory'
     {
-        InstanceName    = $SQLInstance
-        DynamicAlloc    = $true
-        Ensure          = 'Present'
+        InstanceName             = $SQLInstance
+        DynamicAlloc             = $true
+        Ensure                   = 'Present'
+        MinMemory                = 1024 
+        ProcessOnlyOnActiveNode  = $true
     }
 
     SQLServerMaxDop 'SetMaxXop'
     {
-        InstanceName    = $SQLInstance
-        DynamicAlloc    = $true
-        Ensure          = 'Present'
+        InstanceName             = $SQLInstance
+        DynamicAlloc             = $true
+        Ensure                   = 'Present'
+        ProcessOnlyOnActiveNode  = $true
     }
 
     SQLServerNetwork 'ConfigNetwork'
@@ -101,6 +107,7 @@ Param(  [Parameter(Mandatory = $true)]
        ProtocolName     = 'TCP'
        IsEnabled        = $true
        TcpPort          = $SQLPort
+       TcpDynamicPort   = $false 
        RestartService   = $true
     }
 
@@ -195,4 +202,45 @@ Param(  [Parameter(Mandatory = $true)]
         RestartService  = $false
     }
 
+    SqlServerConfiguration 'FillFactor'
+    {
+        ServerName = $Server
+        InstanceName = $SQLInstance
+        OptionName = 'fill factor'
+        OptionValue = 100
+    }
+
+    SqlServerConfiguration 'CostThresholdofParallelism'
+    {
+        ServerName = $Server
+        InstanceName = $SQLInstance
+        OptionName = 'cost threshold for parallelism'
+        OptionValue = 50
+    }
+
+    UserRightsAssignment InstantFilieIni
+    {
+        Policy     = 'Perform_volume_maintenance_tasks' 
+        Identity   = $SQLServiceAccount        
+    }
+
+    FirewallProfile PrivateProfile
+    {
+        Name    = 'Private'
+        Enabled = 'False' 
+    }
+
+    FirewallProfile DomainProfile
+    {
+        Name    = 'Domain'
+        Enabled = 'False' 
+    }
+    
+    FirewallProfile PublicProfile
+    {
+        Name    = 'Public'
+        Enabled = 'False' 
+    }
+
+    
 }
