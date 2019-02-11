@@ -14,6 +14,12 @@ Param(
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $SqlInstallCredential,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $SqlServiceCredential,
         
         [ValidateNotNullorEmpty()]
         [string]
@@ -32,7 +38,7 @@ Param(
         Ensure               = 'Present'
         Name                 = 'NT SERVICE\ClusSvc'
         LoginType            = 'WindowsUser'
-        ServerName =         = $Server
+        ServerName           = $Server
         InstanceName         = $SQLInstance
         PsDscRunAsCredential = $SqlInstallCredential
     }
@@ -40,7 +46,7 @@ Param(
     # Add the required permissions to the cluster service login
     SQLServerPermission AddNTServiceClusSvcPermissions
     {
-        DependsOn            = '[xSQLServerLogin]AddNTServiceClusSvc'
+        DependsOn            = '[SQLServerLogin]AddNTServiceClusSvc'
         Ensure               = 'Present'
         ServerName           = $Server
         InstanceName         = $SQLInstance
@@ -68,9 +74,9 @@ Param(
         ServerName            = $Server
         InstanceName      = $SQLInstance
         PsDscRunAsCredential = $SqlInstallCredential
-    }
+    }#>
 
-    SQLServerEndpointPermission SQLConfigureEndpointPermission
+   SQLServerEndpointPermission SQLConfigureEndpointPermission
     {
         Ensure               = 'Present'
         ServerName             = $Server
@@ -80,18 +86,18 @@ Param(
         Permission           = 'CONNECT'
     
         PsDscRunAsCredential = $SqlInstallCredential
-        DependsOn = '[xSQLServerEndpoint]HADREndpoint','[xSQLServerLogin]AddSQLServiceAccount'
+        DependsOn = '[SQLServerEndpoint]HADREndpoint','[SQLServerLogin]AddSQLServiceAccount'
     }
     
     SQLAlwaysOnService 'EnableAlwaysOn'
     {
         Ensure               = 'Present'
         ServerName           = $Server
-        InstanceName            = $SQLInstance
+        InstanceName         = $SQLInstance
         RestartTimeout       = $RestartTimeout
 
         PsDscRunAsCredential = $SqlInstallCredential
-    }
+    }#>
 
 
 }

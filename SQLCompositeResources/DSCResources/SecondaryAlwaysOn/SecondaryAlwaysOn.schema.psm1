@@ -239,6 +239,7 @@ Param(  [Parameter(Mandatory = $true)]
     {
         Server = $Server
         SqlInstallCredential = $SqlInstallCredential
+        SqlServiceCredential = $SqlServiceCredential
     
         DependsOn = '[WindowsClusterInstall]SecondaryNode','[SingleInstanceInstall]Standalone'
     }

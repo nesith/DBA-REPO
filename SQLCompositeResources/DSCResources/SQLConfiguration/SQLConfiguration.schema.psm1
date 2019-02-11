@@ -206,7 +206,7 @@ Param(  [Parameter(Mandatory = $true)]
     {
         ServerName = $Server
         InstanceName = $SQLInstance
-        OptionName = 'fill factor'
+        OptionName = 'fill factor (%)'
         OptionValue = 100
     }
 

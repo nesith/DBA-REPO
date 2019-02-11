@@ -187,7 +187,7 @@ param
         [string]
         $AdHocDistributedQueriesEnabled = 0
   )
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName PSDscResources -ModuleVersion 2.9.0.0
     Import-DscResource -ModuleName SQLCompositeResources
     Import-DscResource -ModuleName xFailoverCluster -ModuleVersion 1.12.0.0
     Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.2.0.0

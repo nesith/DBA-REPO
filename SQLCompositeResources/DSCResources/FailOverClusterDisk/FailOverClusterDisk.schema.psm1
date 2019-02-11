@@ -5,8 +5,8 @@ Param(
         [hashtable[]]
         $DiskConfiguration
 )
-Import-DscResource -ModuleName xStorage -ModuleVersion 3.2.0.0
-Import-DscResource -ModuleName xFailoverCluster -ModuleVersion 1.8.0.0
+Import-DscResource -ModuleName StorageDsc -ModuleVersion 4.4.0.0
+Import-DscResource -ModuleName xFailoverCluster -ModuleVersion 1.12.0.0
 
     foreach ($Disk in $DiskConfiguration)
     {

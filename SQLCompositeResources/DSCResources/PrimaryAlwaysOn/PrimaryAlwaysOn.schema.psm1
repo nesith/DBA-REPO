@@ -39,7 +39,7 @@ Configuration PrimaryAlwaysOn {
         
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
-        [string]
+        [string[]]
         $SQLSysAdminAccounts,
 
         [ValidateNotNullorEmpty()]
@@ -169,48 +169,31 @@ Configuration PrimaryAlwaysOn {
         $AdHocDistributedQueriesEnabled = 0
 
     )
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -ModuleName SQLCompositeResources
+    Import-DscResource -ModuleName PSDScResources -ModuleVersion 2.9.0.0
+    Import-DscResource -ModuleName SQLCompositeResources -ModuleVersion 2.0
     Import-DscResource -ModuleName xFailoverCluster -ModuleVersion 1.12.0.0
 
-    SingleInstanceInstall Standalone 
-    { 
-        Server = $Server
-        SQLInstance = $SQLInstance
-        SetupSourcePath = $SetupSourcePath
-        UpdateEnabled = $UpdateEnabled
-        ForceReboot = $ForceReboot
-        Features = $Features
-        SQLSysAdminAccounts = $SQLSysAdminAccounts
-        SQLCollation = $SQLCollation
-        InstallSharedDir = $InstallSharedDir
-        InstallSharedWOWDir = $InstallSharedWOWDir
-        InstanceDir = $InstanceDir
-        InstallSQLDataDir = $InstallSQLDataDir
-        SQLUserDBDir = $SQLUserDBDir
-        SQLUserDBLogDir = $SQLUserDBLogDir
-        SQLTempDBDir = $SQLTempDBDir
-        SQLTempDBLogDir = $SQLTempDBLogDir
-        SQLBackupDir = $SQLBackupDir
-        SQLPort = $SQLPort
-        SqlInstallCredential = $SqlInstallCredential
-        SqlServiceCredential = $SqlServiceCredential
-        SqlAgentServiceCredential = $SqlAgentServiceCredential
-        VirtualMemoryInitialSize = $VirtualMemoryInitialSize
-        VirtualMemoryMaximumSize = $VirtualMemoryMaximumSize
-        VirtualMemoryDrive = $VirtualMemoryDrive
-        XpCmdShellEnabled = $XpCmdShellEnabled
-        OptimizeAdhocWorkloads= $OptimizeAdhocWorkloads
-        CrossDBOwnershipChaining = $CrossDBOwnershipChaining
-        IsSqlClrEnabled = $IsSqlClrEnabled
-        AgentXPsEnabled = $AgentXPsEnabled
-        DatabaseMailEnabled = $DatabaseMailEnabled
-        OleAutomationProceduresEnabled = $OleAutomationProceduresEnabled
-        DefaultBackupCompression = $DefaultBackupCompression
-        RemoteDacConnectionsEnabled = $RemoteDacConnectionsEnabled
-        AdHocDistributedQueriesEnabled = $AdHocDistributedQueriesEnabled
-
-    } 
+   SingleInstanceInstall StandAlone
+   {
+      Server                    = $Server
+      SetupSourcePath           = $SetupSourcePath
+      SQLInstance               = $SQLInstance
+      Features                  = $Features
+      SQLCollation              = $SQLCollation
+      UpdateEnabled             = $UpdateEnabled
+      InstallSharedDir          = $InstallSharedDir
+      InstallSharedWOWDir       = $InstallSharedWOWDir
+      SQLSysAdminAccounts       = $SQLSysAdminAccounts
+      SQLUserDBDir              = $SQLUserDBDir
+      SQLUserDBLogDir           = $SQLUserDBLogDir
+      SQLTempDBDir              = $SQLTempDBDir
+      SQLTempDBLogDir           = $SQLTempDBLogDir
+      SqlServiceCredential      = $SqlServiceCredential
+      SqlAgentServiceCredential = $SqlAgentServiceCredential
+      SQLBackupDir              = $SQLBackupDir
+      InstallSQLDataDir         = $InstallSQLDataDir
+      SqlInstallCredential      = $SqlInstallCredential      
+   }
 
     WindowsClusterInstall PrimaryNode
     {
@@ -230,6 +213,7 @@ Configuration PrimaryAlwaysOn {
     {
         Server = $Server
         SqlInstallCredential = $SqlInstallCredential
+        SqlServiceCredential = $SqlServiceCredential
 
         DependsOn = '[WindowsClusterInstall]PrimaryNode','[xcluster]AlwaysOnClust'
     }
