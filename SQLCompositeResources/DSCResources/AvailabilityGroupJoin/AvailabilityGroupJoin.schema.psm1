@@ -54,7 +54,7 @@ Param(
         $FailoverMode ='Automatic'
         )
 
-    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.2.0.0
+    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.3.0.0
 
     foreach ($AG in $AvailabilityGroupName)
     {

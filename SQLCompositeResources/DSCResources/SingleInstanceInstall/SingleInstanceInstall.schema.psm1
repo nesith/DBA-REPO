@@ -188,7 +188,7 @@ Configuration SingleInstanceInstall {
     )
     
     Import-DscResource -ModuleName PSDScresources -ModuleVersion 2.9.0.0
-    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.2.0.0
+    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.3.0.0
     Import-DscResource -ModuleName SQLCompositeResources -ModuleVersion 2.0
     
     WindowsFeature 'NetFramework45'

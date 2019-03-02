@@ -65,7 +65,7 @@ Param(  [Parameter(Mandatory = $true)]
         $AdHocDistributedQueriesEnabled = 0
         )
 
-    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.2.0.0
+    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.3.0.0
     Import-DscResource -ModuleName ComputerManagementDsc -ModuleVersion 6.1.0.0 
     Import-DscResource -ModuleName StorageDsc -ModuleVersion 4.4.0.0
     Import-DscResource -ModuleName NetworkingDsc -ModuleVersion 6.3.0.0
