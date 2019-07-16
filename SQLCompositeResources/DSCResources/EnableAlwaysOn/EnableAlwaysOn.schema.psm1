@@ -30,7 +30,7 @@ Param(
         $RestartTimeout = 120
 )
 
-    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.3.0.0
+    Import-DscResource -ModuleName SQLServerDsc -ModuleVersion 12.4.0.0
     
     # Adding the required service account to allow the cluster to log into SQL
     SQLServerLogin AddNTServiceClusSvc
@@ -62,7 +62,7 @@ Param(
         Ensure               = 'Present'
         Port                 = $HADRPort
         ServerName           = $Server
-        InstanceName      = $SQLInstance
+        InstanceName         = $SQLInstance
         PsDscRunAsCredential = $SqlInstallCredential
     }
     
@@ -71,15 +71,15 @@ Param(
         Ensure               = 'Present'
         Name                 = $SqlServiceCredential.UserName
         LoginType            = 'WindowsUser'
-        ServerName            = $Server
-        InstanceName      = $SQLInstance
+        ServerName           = $Server
+        InstanceName         = $SQLInstance
         PsDscRunAsCredential = $SqlInstallCredential
     }#>
 
    SQLServerEndpointPermission SQLConfigureEndpointPermission
     {
         Ensure               = 'Present'
-        ServerName             = $Server
+        ServerName           = $Server
         InstanceName         = $SQLInstance
         Name                 = 'HADR'
         Principal            = $SqlServiceCredential.UserName
