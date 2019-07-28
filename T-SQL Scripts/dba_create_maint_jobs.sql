@@ -5,6 +5,8 @@ DECLARE @step_name          AS sysname
 DECLARE @sub_system         AS varchar(MAX)
 DECLARE @command_dbcc       AS varchar(MAX)
 DECLARE @command_index      AS varchar(MAX)
+DECLARE @command_backup	    AS VARCHAR(MAX)
+DECLARE @command_log_backup AS VARCHAR(MAX)
 DECLARE @schedule_name      AS varchar(MAX)
 DECLARE @freq_type          AS INT
 DECLARE @active_start_time  AS INT
@@ -24,7 +26,9 @@ IF @version < 10
 	BEGIN
         SET @command_dbcc       = 'SQLCMD -E -d master -Q "EXECUTE dbo.DatabaseIntegrityCheck @Databases = ''ALL_DATABASES''" -b'
         SET @command_index      = 'SQLCMD -E -d master -Q "EXECUTE dbo.IndexOptimize @Databases = ''USER_DATABASES'',@FragmentationLow = NULL,@FragmentationMedium = ''INDEX_REORGANIZE,INDEX_REBUILD_ONLINE,INDEX_REBUILD_OFFLINE'',@FragmentationHigh = ''INDEX_REBUILD_ONLINE,INDEX_REBUILD_OFFLINE'',@FragmentationLevel1 = 5,@FragmentationLevel2 = 30,@UpdateStatistics = ''ALL'',@SortInTempdb = ''Y''" -b'      
-        SET @sub_system         = 'CMDEXEC'
+        SET @command_backup     = ''
+		SET @command_log_backup = ''
+		SET @sub_system         = 'CMDEXEC'
 	END
 
 IF @version >=11
@@ -39,6 +43,8 @@ IF @version >=11
                                             @FragmentationLevel2 = 30,
                                             @UpdateStatistics = ''ALL'',
                                             @SortInTempdb = ''Y'''
+		SET @command_backup     = ''
+		SET @command_log_backup = ''
         SET @sub_system         = 'TSQL'
 	END
 --setup DBCC Check DB job
@@ -51,8 +57,8 @@ SET @enabled            = 0
 SET @category_id        = 3
 SET @freq_interval      = 1
 SET @freq_recur_factor	= 1
-SET @owner		= 'sa'
-SET @description	= 'This Job does weekly integrity checks on all databases using OLA''s scripts'
+SET @owner		        = 'sa'
+SET @description	    = 'This Job does weekly integrity checks on all databases using OLA''s scripts'
 
 
 --create job
@@ -93,9 +99,9 @@ SET @freq_type          = 4
 SET @active_start_time  = 010000
 SET @enabled            = 0
 SET @category_id        = 3
-SET @freq_interval	= 1
-SET @owner		= 'sa'
-SET @description	= 'This Job does daily index maintenance and stats updates using OLA''s scripts'
+SET @freq_interval	    = 1
+SET @owner		        = 'sa'
+SET @description	    = 'This Job does daily index maintenance and stats updates using OLA''s scripts'
 
 --create job
 EXECUTE msdb.dbo.sp_add_job
