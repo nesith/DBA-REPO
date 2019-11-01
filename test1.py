@@ -2,7 +2,7 @@ import requests, urllib
 
 headers = {
     # Request headers
-    'Ocp-Apim-Subscription-Key': '967a5343501f490bbe941e0ec780e67e'
+    'Ocp-Apim-Subscription-Key': '652c962bc61d46e3aba7cd849aca2e6c'
 }
 
 params = urllib.parse.urlencode({
@@ -14,6 +14,6 @@ params = urllib.parse.urlencode({
     #'$select': '{string}',
 })
 
-response = requests.get('https://api-test.bne.com.au/api/v2/flights?',headers=headers)
+response = requests.get('https://api-test.bne.com.au:443/mxsr/mxsr?',headers=headers)
 
 print(response.content)
